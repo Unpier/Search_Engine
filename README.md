@@ -18,7 +18,7 @@
 ![search](https://raw.githubusercontent.com/Unpier/Search_Engine/main/img/Search.PNG)
 
 ## Индиксация сайтов
-1. __в адресную строку сайтов введите http://localhost:8080/__
+1. __В адресную строку сайтов введите http://localhost:8080/__
 ![search1](https://raw.githubusercontent.com/Unpier/Search_Engine/main/img/%D0%BF%D0%BE%D0%B8%D1%81%D0%BA%D0%BE%D0%B2%D0%B0%D1%8F%20%D1%81%D1%82%D1%80%D0%BE%D0%BA%D0%B0.PNG)
 2. __Выберете вкладку MANAGEMENT__
 ![man1](https://raw.githubusercontent.com/Unpier/Search_Engine/main/img/man1.png)
