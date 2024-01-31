@@ -13,7 +13,7 @@
 ## __Dashboard__. Эта вкладка открывается по умолчанию. На ней отображается общая статистика по всем сайтам, а также детальная статистика и статус по каждому из сайтов (статистика, получаемая по запросу /api/statistics).
 ![dashboard](https://raw.githubusercontent.com/Unpier/SearchEngine/main/img/Dashboard.PNG?token=GHSAT0AAAAAACNMUWUOHK3B23G6LXSFUGRKZNT2ZJQ)
 ## __Management__. На этой вкладке находятся инструменты управления поисковым движком — запуск и остановка полной индексации (переиндексации), а также возможность добавить (обновить) отдельную страницу по ссылке
-![managment](https://raw.githubusercontent.com/Unpier/SearchEngine/main/img/Managment.PNG?token=GHSAT0AAAAAACNMUWUP6AZLQB35DLTJPU2EZNT22SQ)
+![managment]([https://raw.githubusercontent.com/Unpier/SearchEngine/main/img/Managment.PNG?token=GHSAT0AAAAAACNMUWUP6AZLQB35DLTJPU2EZNT22SQ](https://raw.githubusercontent.com/Unpier/Search_Engine/main/img/Managment.PNG))
 ## __Search__. Эта страница предназначена для тестирования поискового движка. На ней находится поле поиска, выпадающий список с выбором сайта для поиска, а при нажатии на кнопку «Найти» выводятся результаты поиска (по API-запросу /api/search)
 ![search](https://raw.githubusercontent.com/Unpier/SearchEngine/main/img/Search.PNG?token=GHSAT0AAAAAACNMUWUO5MPLDE7FD462VXWKZNT23WQ)
 
