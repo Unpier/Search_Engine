@@ -17,9 +17,7 @@ import searchengine.utils.CleanHtmlCode;
 
 import java.util.*;
 import java.util.stream.Collectors;
-/**
- * Реализация сервиса поиска.
- */
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -29,14 +27,7 @@ public class SearchServiceImpl implements SearchService {
     private final PageRepository pageRepository;
     private final IndexRepository indexSearchRepository;
     private final SiteRepository siteRepository;
-    /**
-     * Выполняет поиск по всем сайтам.
-     *
-     * @param searchText текст для поиска
-     * @param offset     смещение для пагинации
-     * @param limit      максимальное количество результатов
-     * @return список статистических данных о результатах поиска
-     */
+
     @Override
     public List<StatisticsSearch> allSiteSearch(String searchText, int offset, int limit) {
         log.info("Получение результатов поиска \"" + searchText + "\"");
@@ -69,15 +60,7 @@ public class SearchServiceImpl implements SearchService {
         log.info("Поиск завершен. Получены результаты.");
         return searchData;
     }
-    /**
-     * Выполняет поиск на указанном сайте.
-     *
-     * @param searchText текст для поиска
-     * @param url        URL сайта для поиска
-     * @param offset     смещение для пагинации
-     * @param limit      максимальное количество результатов
-     * @return список статистических данных о результатах поиска
-     */
+
     @Override
     public List<StatisticsSearch> siteSearch(String searchText, String url, int offset, int limit) {
         log.info("Поиск \"" + searchText + "\" в - " + url);
@@ -87,12 +70,7 @@ public class SearchServiceImpl implements SearchService {
         log.info("Поиск завершен. Получены результаты.");
         return getSearchDtoList(foundLemmaList, textLemmaList, offset, limit);
     }
-    /**
-     * Извлекает леммы из текста для поиска.
-     *
-     * @param searchText текст для поиска
-     * @return список лемм
-     */
+
     private List<String> getLemmaFromSearchText(String searchText) {
         String[] words = searchText.toLowerCase(Locale.ROOT).split(" ");
         List<String> lemmaList = new ArrayList<>();
@@ -102,49 +80,16 @@ public class SearchServiceImpl implements SearchService {
         }
         return lemmaList;
     }
-    /**
-     * Получает список лемм из указанного сайта.
-     *
-     * @param lemmas список лемм
-     * @param site   сайт для поиска
-     * @return список лемм
-     */
+
     private List<Lemma> getLemmaListFromSite(List<String> lemmas, Site site) {
         lemmaRepository.flush();
-        return lemmaRepository.findLemmaListBySite(lemmas, site)
-                .stream()
-                .sorted(Comparator.comparingInt(Lemma::getFrequency))
-                .collect(Collectors.toList());
+        List<Lemma> lemmaList = lemmaRepository.findLemmaListBySite(lemmas, site);
+        List<Lemma> result = new ArrayList<>(lemmaList);
+        result.sort(Comparator.comparingInt(Lemma::getFrequency));
+        return result;
     }
-    /**
-     * Получает список статистических данных о результатах поиска на основе лемм и текста запроса.
-     *
-     * @param lemmaList     список лемм
-     * @param textLemmaList список лемм текста запроса
-     * @param offset        смещение для пагинации
-     * @param limit         максимальное количество результатов
-     * @return список статистических данных о результатах поиска
-     */
-    private List<StatisticsSearch> getSearchDtoList(List<Lemma> lemmaList, List<String> textLemmaList, int offset, int limit) {
-        pageRepository.flush();
-        if (lemmaList.size() >= textLemmaList.size()) {
-            List<Page> foundPageList = pageRepository.findByLemmaList(lemmaList);
-            indexSearchRepository.flush();
-            List<Index> foundIndexList = indexSearchRepository.findByPagesAndLemmas(lemmaList, foundPageList);
-            Hashtable<Page, Float> sortedPageByAbsRelevance = getPageAbsRelevance(foundPageList, foundIndexList);
-            return getSearchData(sortedPageByAbsRelevance, textLemmaList, offset, limit);
-        } else {
-            return new ArrayList<>();
-        }
-    }
-    /**
-     * Получает статистические данные о результатах поиска.
-     *
-     * @param pageList      список страниц
-     * @param textLemmaList список лемм текста запроса
-     * @return список статистических данных о результатах поиска
-     */
-    private List<StatisticsSearch> getSearchData(Hashtable<Page, Float> pageList, List<String> textLemmaList, int offset, int limit) {
+
+    private List<StatisticsSearch> getSearchData(Hashtable<Page, Float> pageList, List<String> textLemmaList) {
         List<StatisticsSearch> result = new ArrayList<>();
 
         for (Page page : pageList.keySet()) {
@@ -165,13 +110,7 @@ public class SearchServiceImpl implements SearchService {
         }
         return result;
     }
-    /**
-     * Создает сниппет для результата поиска.
-     *
-     * @param content    содержимое страницы
-     * @param lemmaList  список лемм
-     * @return сниппет результата поиска
-     */
+
     private String getSnippet(String content, List<String> lemmaList) {
         List<Integer> lemmaIndex = new ArrayList<>();
         StringBuilder result = new StringBuilder();
@@ -188,13 +127,7 @@ public class SearchServiceImpl implements SearchService {
         }
         return result.toString();
     }
-    /**
-     * Получает список слов из содержимого страницы на основе индексов лемм.
-     *
-     * @param content    содержимое страницы
-     * @param lemmaIndex индексы лемм
-     * @return список слов
-     */
+
     private List<String> getWordsFromContent(String content, List<Integer> lemmaIndex) {
         List<String> result = new ArrayList<>();
         for (int i = 0; i < lemmaIndex.size(); i++) {
@@ -212,14 +145,7 @@ public class SearchServiceImpl implements SearchService {
         result.sort(Comparator.comparingInt(String::length).reversed());
         return result;
     }
-    /**
-     * Получает слово из содержимого страницы по индексам начала и конца.
-     *
-     * @param start  индекс начала слова
-     * @param end    индекс конца слова
-     * @param content содержимое страницы
-     * @return слово с выделенной частью
-     */
+
     private String getWordsFromIndex(int start, int end, String content) {
         String word = content.substring(start, end);
         int prevPoint;
@@ -238,13 +164,30 @@ public class SearchServiceImpl implements SearchService {
         }
         return text;
     }
-    /**
-     * Вычисляет абсолютную релевантность страницы на основе списка страниц и индексов.
-     *
-     * @param pageList  список страниц
-     * @param indexList список индексов
-     * @return хэш-таблица с абсолютной релевантностью страниц
-     */
+
+    private List<StatisticsSearch> getSearchDtoList(List<Lemma> lemmaList, List<String> textLemmaList, int offset, int limit) {
+        List<StatisticsSearch> result = new ArrayList<>();
+        pageRepository.flush();
+        if (lemmaList.size() >= textLemmaList.size()) {
+            List<Page> foundPageList = pageRepository.findByLemmaList(lemmaList);
+            indexSearchRepository.flush();
+            List<Index> foundIndexList = indexSearchRepository.findByPagesAndLemmas(lemmaList, foundPageList);
+            Hashtable<Page, Float> sortedPageByAbsRelevance = getPageAbsRelevance(foundPageList, foundIndexList);
+            List<StatisticsSearch> dataList = getSearchData(sortedPageByAbsRelevance, textLemmaList);
+
+            if (offset > dataList.size()) {
+                return new ArrayList<>();
+            }
+
+            if (dataList.size() > limit) {
+                for (int i = offset; i < limit; i++) {
+                    result.add(dataList.get(i));
+                }
+                return result;
+            } else return dataList;
+        } else return result;
+    }
+
     private Hashtable<Page, Float> getPageAbsRelevance(List<Page> pageList, List<Index> indexList) {
         HashMap<Page, Float> pageWithRelevance = new HashMap<>();
         for (Page page : pageList) {
@@ -263,4 +206,5 @@ public class SearchServiceImpl implements SearchService {
         }
         return pageWithAbsRelevance.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, Hashtable::new));
     }
+
 }

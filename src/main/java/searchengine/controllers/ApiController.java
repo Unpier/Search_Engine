@@ -80,6 +80,7 @@ public class ApiController {
             } else {
                 searchData = searchService.allSiteSearch(request, offset, limit);
             }
+//            return new ResponseEntity<>(new SearchResults(true, searchData.size(), searchData), HttpStatus.OK);
             return new ResponseEntity<>(new SearchResults(true, searchData.size(), searchData), HttpStatus.OK);
         }
     }

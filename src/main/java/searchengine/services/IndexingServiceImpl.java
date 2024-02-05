@@ -17,9 +17,7 @@ import searchengine.repositories.SiteRepository;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-/**
- * Реализация сервиса индексации.
- */
+
 @Service
 @Slf4j
 public class IndexingServiceImpl implements IndexingService {
@@ -42,12 +40,7 @@ public class IndexingServiceImpl implements IndexingService {
         this.indexParser = indexParser;
         this.lemmaParser = lemmaParser;
     }
-    /**
-     * Индексирует указанный URL.
-     *
-     * @param url URL для индексации
-     * @return true, если индексация начата; в противном случае - false
-     */
+
     @Override
     public boolean urlIndexing(String url) {
         if (urlCheck(url)) {
@@ -60,12 +53,9 @@ public class IndexingServiceImpl implements IndexingService {
             return false;
         }
     }
-    /**
-     * Запускает индексацию всех сайтов.
-     *
-     * @return true, если индексация начата; в противном случае - false
-     */
+
     @Override
+    @Autowired
     public boolean startIndexing() {
         if (isIndexingActive()) {
             log.debug("Индексация уже запущена");
@@ -84,11 +74,7 @@ public class IndexingServiceImpl implements IndexingService {
         }
         return true;
     }
-    /**
-     * Останавливает индексацию.
-     *
-     * @return true, если индексация остановлена; в противном случае - false
-     */
+
     @Override
     public boolean stopIndexing() {
         if (isIndexingActive()) {
@@ -100,11 +86,7 @@ public class IndexingServiceImpl implements IndexingService {
             return false;
         }
     }
-    /**
-     * Проверяет, активна ли индексация.
-     *
-     * @return true, если индексация активна; в противном случае - false
-     */
+
     private boolean isIndexingActive() {
         siteRepository.flush();
         Iterable<Site> siteList = siteRepository.findAll();
@@ -115,12 +97,7 @@ public class IndexingServiceImpl implements IndexingService {
         }
         return false;
     }
-    /**
-     * Проверяет, существует ли указанный URL в списке сайтов.
-     *
-     * @param url URL для проверки
-     * @return true, если URL существует в списке; в противном случае - false
-     */
+
     private boolean urlCheck(String url) {
         List<searchengine.config.Site> urlList = sitesList.getSites();
         for (searchengine.config.Site site : urlList) {
