@@ -72,7 +72,6 @@ public class SiteIndexing implements Runnable {
         return "";
     }
 
-    //    @Transactional
     private void saveDateSite() {
         Site dbSite = new Site();
         dbSite.setUrl(url);
@@ -94,7 +93,6 @@ public class SiteIndexing implements Runnable {
         } else throw new InterruptedException();
     }
 
-    //    @Transactional
     private void saveToBase(List<PageStatistics> pages) throws InterruptedException {
         if (!Thread.interrupted()) {
             List<Page> dbPages = new CopyOnWriteArrayList<>();
@@ -126,7 +124,6 @@ public class SiteIndexing implements Runnable {
         siteRepository.save(sitePage);
     }
 
-    //    @Transactional
     private void getLemmasPage() {
         if (!Thread.interrupted()) {
             Site siteId = siteRepository.findByUrl(url);
@@ -135,7 +132,6 @@ public class SiteIndexing implements Runnable {
             List<StatisticsLemma> statisticsLemmaList = lemmaParser.getLemmaDtoList();
             List<Lemma> lemmaList = new CopyOnWriteArrayList<>();
             for (StatisticsLemma statisticsLemma : statisticsLemmaList) {
-//                lemmaList.add(new Lemma(siteId, statisticsLemma.getLemma(), statisticsLemma.getFrequency()));
                 Lemma lemma = new Lemma();
                 lemma.setId((long) (Math.random() * 10000000));
                 lemma.setLemma(statisticsLemma.getLemma());
@@ -150,7 +146,6 @@ public class SiteIndexing implements Runnable {
         }
     }
 
-    //@Transactional
     private void indexingWords() throws InterruptedException {
         if (!Thread.interrupted()) {
             Site dbSite = siteRepository.findByUrl(url);
@@ -162,7 +157,6 @@ public class SiteIndexing implements Runnable {
                 Index index = new Index();
                 Page page = pageRepository.getById(statisticsIndex.getPageID());
                 Lemma lemma = lemmaRepository.getById(statisticsIndex.getLemmaID());
-//                indexList.add(new Index(page, lemma, statisticsIndex.getRank()));
                 index.setId((long) (Math.random()*10000000));
                 index.setPageId(page);
                 index.setLemma(lemma);
