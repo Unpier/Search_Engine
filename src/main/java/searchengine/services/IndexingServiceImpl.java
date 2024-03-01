@@ -1,14 +1,13 @@
 package searchengine.services;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import searchengine.config.SitesList;
 import searchengine.model.Site;
 import searchengine.model.Status;
 import searchengine.parser.IndexParser;
 import searchengine.parser.LemmaParser;
-import searchengine.parser.SiteIndexing;
+import searchengine.parser.SiteIndexingTask;
 import searchengine.repositories.IndexRepository;
 import searchengine.repositories.LemmaRepository;
 import searchengine.repositories.PageRepository;
@@ -53,7 +52,7 @@ public class IndexingServiceImpl implements IndexingService {
         if (urlCheck(url)) {
             log.info("Начало переиндексации сайта - " + url);
             executorService = Executors.newFixedThreadPool(10);
-            executorService.submit(new SiteIndexing(pageRepository, siteRepository, lemmaRepository, indexRepository, lemmaParser, indexParser, url, sitesList));
+            executorService.submit(new SiteIndexingTask(pageRepository, siteRepository, lemmaRepository, indexRepository, lemmaParser, indexParser, url, sitesList));
             executorService.shutdown();
             return true;
         } else {
@@ -78,7 +77,7 @@ public class IndexingServiceImpl implements IndexingService {
                 Site dbSite = new Site();
                 dbSite.setName(site.getName());
                 log.info("Парсинг сайта: " + site.getName());
-                executorService.submit(new SiteIndexing(pageRepository, siteRepository, lemmaRepository, indexRepository, lemmaParser, indexParser, url, sitesList));
+                executorService.submit(new SiteIndexingTask(pageRepository, siteRepository, lemmaRepository, indexRepository, lemmaParser, indexParser, url, sitesList));
             }
             executorService.shutdown();
         }

@@ -30,6 +30,10 @@ public class IndexSearch implements IndexParser {
         return statisticsIndexList;
     }
 
+    private HashMap<String, Integer> getLemmaListFromContent(String content, String contentType) {
+        String cleanContent = CleanHtmlCode.clear(content, contentType);
+        return morphology.getLemmaList(cleanContent);
+    }
     @Override
     public void run(Site dbSite) {
         Iterable<Page> pageList = pageRepository.findBySiteId(dbSite);
@@ -40,10 +44,8 @@ public class IndexSearch implements IndexParser {
             if (page.getCode() < 400) {
                 long pageId = page.getId();
                 String content = page.getContent();
-                String title = CleanHtmlCode.clear(content, "title");
-                String body = CleanHtmlCode.clear(content, "body");
-                HashMap<String, Integer> titleList = morphology.getLemmaList(title);
-                HashMap<String, Integer> bodyList = morphology.getLemmaList(body);
+                HashMap<String, Integer> titleList = getLemmaListFromContent(content, "title");
+                HashMap<String, Integer> bodyList = getLemmaListFromContent(content, "body");
 
                 for (Lemma lemma : lemmaList) {
                     Long lemmaId = lemma.getId();
