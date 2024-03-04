@@ -92,7 +92,7 @@ public class ApiController {
             log.info("Страница не указана");
             return new ResponseEntity<>(new BadRequest(false, "Страница не указана"), HttpStatus.BAD_REQUEST);
         } else {
-            if (indexingService.urlIndexing(url)) {
+            if (indexingService.urlIndexing(url) == true) {
                 log.info("Страница - " + url + " - добавлено для переиндексации");
                 return new ResponseEntity<>(new Response(true), HttpStatus.OK);
             } else {
